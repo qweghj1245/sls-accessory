@@ -1,0 +1,28 @@
+service: sls-accessory
+
+custom: 
+  secret: ${file(secret.json)}
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  stage: ${self:custom.secret.STAGE}
+  region: us-east-1
+  environment: 
+    STAGE: ${self:custom.secret.STAGE}
+    DB: ${self:custom.secret.DB}
+
+functions:
+  app:
+    handler: handler.app
+    events:
+      - http:
+          path: /
+          method: ANY
+          cors: true
+      - http:
+          path: /{proxy+}
+          method: ANY
+          cors: true
+plugins:
+  - serverless-offline

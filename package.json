@@ -1,0 +1,24 @@
+{
+  "name": "sls-accessory",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "helmet": "^3.21.2",
+    "mongoose": "^5.7.13",
+    "serverless-http": "^2.3.0",
+    "serverless-offline": "^5.12.1",
+    "validator": "^12.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "offline": "sls offline start --skipCacheInvalidation --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
