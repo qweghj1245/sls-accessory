@@ -6,4 +6,8 @@ router
   .route('/')
   .post(user.createUser)
 
+router
+  .route('/login')
+  .post(user.userLogin)
+
 module.exports = router;

@@ -11,7 +11,9 @@ provider:
   environment: 
     STAGE: ${self:custom.secret.STAGE}
     DB: ${self:custom.secret.DB}
-
+    JWT_SECRET: ${self:custom.secret.JWT_SECRET}
+    COOKIEEXPIRE: ${self:custom.secret.COOKIEEXPIRE}
+    
 functions:
   app:
     handler: handler.app

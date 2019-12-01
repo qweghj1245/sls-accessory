@@ -7,8 +7,10 @@
     "lib": "lib"
   },
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "express": "^4.17.1",
     "helmet": "^3.21.2",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.7.13",
     "serverless-http": "^2.3.0",
     "serverless-offline": "^5.12.1",
