@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const validate = require('validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const { AppError } = require('../utils/error');
 
 const UserSchema = new mongoose.Schema({
@@ -45,7 +46,7 @@ const UserSchema = new mongoose.Schema({
     required: [true, 'NAME is required'],
   },
   address: String,
-  phoneNumber: Number,
+  phoneNumber: String,
   photo: String,
   createAt: {
     type: Date,
@@ -85,7 +86,7 @@ UserSchema.methods.toJSON = function () { // 隱藏敏感資訊
 UserSchema.statics.findByCredential = async function (email, password, next) { // 找到使用者 然後 比較密碼
   const user = await User.findOne({ email });
   if (!user) return next(new AppError(404, 'Cannot find user!'));
-  const verify = bcrypt.compare(password, user.password);
+  const verify = await bcrypt.compare(password, user.password);
   if (!verify) return next(new AppError(404, 'Your password is not correct!'));
   return user;
 };
@@ -95,6 +96,13 @@ UserSchema.methods.generateToken = async function () { // 生成 token
   this.tokens = this.tokens.concat({ token });
   await this.save();
   return token;
+};
+
+UserSchema.methods.createResetPasswordToken = function () { // 重置密碼用token
+  const resetToken = crypto.randomBytes(32).toString('hex');
+  this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+  this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  return resetToken;
 };
 
 UserSchema.pre('save', async function (next) { // 加密

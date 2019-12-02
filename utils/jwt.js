@@ -1,4 +1,4 @@
-module.exports.sendTokenConfig = async (user, statusCode, res) => {
+module.exports.sendTokenConfig = async (user, statusCode, res) => { // cookie 包裹
   try {
     const token = await user.generateToken();
     const options = {
