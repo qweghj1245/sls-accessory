@@ -30,6 +30,8 @@ const ProductSchema = new mongoose.Schema({
     default: 999999,
     required: true,
   },
+  colors: [String],
+  size: [String],
   previewProducts: [
     {
       color: String,
@@ -50,7 +52,17 @@ const ProductSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  isDelete: {
+    type: Boolean,
+    default: false,
+  },
 });
+
+ProductSchema.methods.toJSON = function () {
+  const productObject = this.toObject();
+  delete productObject.isDelete;
+  return productObject;
+};
 
 const Product = mongoose.model('Product', ProductSchema);
 
