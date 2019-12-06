@@ -12,7 +12,7 @@ router.route('/allProduct')
 router.route('/getProductById/:id')
   .get(product.getProductById)
 
-router.route('/updateProduct/:id')
+router.route('/updateProduct')
   .patch(auth, restrictTo('admin'), product.updateProduct)
 
 router.route('/updateManyActive')
@@ -23,5 +23,8 @@ router.route('/deleteProduct')
 
 router.route('/collectProduct')
   .post(auth, product.collectProduct)
+
+router.route('/getCollectProducts')
+  .post(auth, product.getCollectProducts)
 
 module.exports = router;

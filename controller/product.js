@@ -35,7 +35,7 @@ module.exports.updateProduct = catchError(async (req, res, next) => { // 更新�
   if (checkAll) return next(new AppError('Server Error!'));
 
   try {
-    const product = await Product.findByIdAndUpdate({ _id: req.params.id }, {
+    const product = await Product.findByIdAndUpdate({ _id: req.body.id }, {
       ...req.body,
       updateAt: Date.now(),
       updatePerson: req.user._id,
@@ -63,9 +63,14 @@ module.exports.deleteManyProduct = catchError(async (req, res, next) => { // 批
 module.exports.collectProduct = catchError(async (req, res, next) => { // 收藏、不收藏商品
   let product;
   if (req.body.isCollected) {
-    product = await Product.findByIdAndUpdate({ _id: req.body.id }, { $addToSet: { collector: req.user._id }}, { new: true });
+    product = await Product.findByIdAndUpdate({ _id: req.body.id }, { $addToSet: { collector: req.user._id } }, { new: true });
   } else {
-    product = await Product.findByIdAndUpdate({ _id: req.body.id }, { $pull: { collector: req.user._id }}, { new: true });
+    product = await Product.findByIdAndUpdate({ _id: req.body.id }, { $pull: { collector: req.user._id } }, { new: true });
   }
   res.status(200).send(product);
+});
+
+module.exports.getCollectProducts = catchError(async (req, res, next) => { // 取得該使用者所有收藏
+  const product = await Product.find({ collector: { $all: req.user._id }});
+  res.send(product);
 });

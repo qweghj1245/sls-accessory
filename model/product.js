@@ -39,7 +39,12 @@ const ProductSchema = new mongoose.Schema({
       quantity: Number,
     },
   ],
-  collector: [String],
+  collector: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+    }
+  ],
   createAt: {
     type: Date,
     default: Date.now(),
@@ -49,7 +54,7 @@ const ProductSchema = new mongoose.Schema({
     default: Date.now(),
   },
   updatePerson: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
   isDelete: {
