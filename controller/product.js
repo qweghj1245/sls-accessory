@@ -59,3 +59,13 @@ module.exports.deleteManyProduct = catchError(async (req, res, next) => { // 批
   await Product.deleteMany({ _id: { $in: req.body.productIds } });
   res.status(200).send({ message: 'success!' });
 });
+
+module.exports.collectProduct = catchError(async (req, res, next) => { // 收藏、不收藏商品
+  let product;
+  if (req.body.isCollected) {
+    product = await Product.findByIdAndUpdate({ _id: req.body.id }, { $addToSet: { collector: req.user._id }}, { new: true });
+  } else {
+    product = await Product.findByIdAndUpdate({ _id: req.body.id }, { $pull: { collector: req.user._id }}, { new: true });
+  }
+  res.status(200).send(product);
+});
