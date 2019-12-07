@@ -15,7 +15,7 @@ module.exports.createProduct = catchError(async (req, res, next) => { // 創建�
 
 module.exports.getAllProducts = catchError(async (req, res, next) => {  // 取得所有商品
   try {
-    const products = await Product.find({ isDelete: false }).sort('-createAt');
+    const products = await Product.find().sort('-createAt');
     res.status(200).send(products);
   } catch (error) {
     return next(new AppError(500, 'Server Error'));
@@ -23,7 +23,7 @@ module.exports.getAllProducts = catchError(async (req, res, next) => {  // 取�
 });
 
 module.exports.getProductById = catchError(async (req, res, next) => { // 取得單一商品
-  const product = await Product.findOne({ _id: req.params.id, isDelete: false });
+  const product = await Product.findOne({ _id: req.params.id });
   if (!product) return next(new AppError(404, 'Cannot find product!'));
   res.status(200).send(product);
 });

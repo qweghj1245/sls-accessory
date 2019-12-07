@@ -57,17 +57,7 @@ const ProductSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
-  isDelete: {
-    type: Boolean,
-    default: false,
-  },
 });
-
-ProductSchema.methods.toJSON = function () {
-  const productObject = this.toObject();
-  delete productObject.isDelete;
-  return productObject;
-};
 
 const Product = mongoose.model('Product', ProductSchema);
 
