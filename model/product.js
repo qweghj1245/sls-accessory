@@ -57,6 +57,10 @@ const ProductSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
+  salesQuantity: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const Product = mongoose.model('Product', ProductSchema);
