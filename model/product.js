@@ -22,13 +22,13 @@ const ProductSchema = new mongoose.Schema({
   },
   price: {
     type: Number,
-    required: true,
+    required: [true, 'Incomplete field!'],
   },
   sizeDescription: String,
   quantity: {
     type: Number,
     default: 999999,
-    required: true,
+    required: [true, 'Incomplete field!'],
   },
   colors: [String],
   size: [String],
@@ -45,14 +45,6 @@ const ProductSchema = new mongoose.Schema({
       ref: 'User',
     }
   ],
-  createAt: {
-    type: Date,
-    default: Date.now(),
-  },
-  updateAt: {
-    type: Date,
-    default: Date.now(),
-  },
   updatePerson: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
@@ -61,6 +53,8 @@ const ProductSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+}, {
+  timestamps: true,
 });
 
 const Product = mongoose.model('Product', ProductSchema);

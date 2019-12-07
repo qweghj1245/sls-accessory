@@ -29,7 +29,7 @@ module.exports.getProductById = catchError(async (req, res, next) => { // 取得
 });
 
 module.exports.updateProduct = catchError(async (req, res, next) => { // 更新單一商品
-  const updateField = ['createAt', 'updateAt', '_id', 'updatePerson'];
+  const updateField = ['_id', 'updatePerson'];
   const keys = Object.keys(req.body);
   const checkAll = keys.some(key => updateField.includes(key));
   if (checkAll) return next(new AppError('Server Error!'));
@@ -51,11 +51,13 @@ module.exports.updateProduct = catchError(async (req, res, next) => { // 更新�
 });
 
 module.exports.updateManyActive = catchError(async (req, res, next) => { // 批次上架商品
+  if (!req.body.productIds.length) return next(400, 'Fields length must gt 1');
   await Product.updateMany({ _id: { $in: req.body.productIds } }, { $set: { isActive: req.body.isActive } });
   res.status(200).send({ message: 'success!' });
 });
 
 module.exports.deleteManyProduct = catchError(async (req, res, next) => { // 批次刪除商品
+  if (!req.body.productIds.length) return next(400, 'Fields length must gt 1');
   await Product.deleteMany({ _id: { $in: req.body.productIds } });
   res.status(200).send({ message: 'success!' });
 });

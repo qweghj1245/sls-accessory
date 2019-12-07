@@ -5,15 +5,11 @@ const { auth, restrictTo } = require('../utils/auth');
 
 router.route('/')
   .post(auth, restrictTo('admin'), product.createProduct)
-
-router.route('/allProduct')
   .get(product.getAllProducts)
+  .patch(auth, restrictTo('admin'), product.updateProduct)
 
 router.route('/getProductById/:id')
   .get(product.getProductById)
-
-router.route('/updateProduct')
-  .patch(auth, restrictTo('admin'), product.updateProduct)
 
 router.route('/updateManyActive')
   .post(auth, restrictTo('admin'), product.updateManyActive)
