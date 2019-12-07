@@ -11,7 +11,10 @@ module.exports.createAnnouncement = catchError(async (req, res, send) => { // �
 
 module.exports.getAnnouncements = catchError(async (req, res, next) => { // 取得所有公告
   const findConfig = {};
-  if (req.body.isActive) findConfig.isActive = true;
+  if (req.body.isActive) {
+    findConfig.isActive = true;
+    findConfig.$and = [{ startDate: { $lte: Date.now() } }, { endDate: { $gte: Date.now() } }]
+  }
   const announcements = await Announcement.find(findConfig);
   res.status(200).send(announcements);
 });

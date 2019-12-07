@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { dateParse } = require('../utils/dateParse');
 
 const announcementSchema = new mongoose.Schema({
   subject: String,
@@ -31,6 +32,11 @@ const announcementSchema = new mongoose.Schema({
   timestamps: true,
 });
 
+announcementSchema.methods.toJSON = function () {
+  const announcementObject = this.toObject();
+  const changeArr = ['createdAt', 'updatedAt', 'startDate', 'endDate'];
+  return dateParse(announcementObject, changeArr);
+};
 
 const Announcement = mongoose.model('Announcement', announcementSchema);
 

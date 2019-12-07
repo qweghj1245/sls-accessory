@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { dateParse } = require('../utils/dateParse');
 
 const ProductSchema = new mongoose.Schema({
   name: {
@@ -56,6 +57,12 @@ const ProductSchema = new mongoose.Schema({
 }, {
   timestamps: true,
 });
+
+ProductSchema.methods.toJSON = function () {
+  const productObject = this.toObject();
+  const changeArr = ['createdAt', 'updatedAt'];
+  return dateParse(productObject, changeArr);
+};
 
 const Product = mongoose.model('Product', ProductSchema);
 

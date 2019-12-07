@@ -4,6 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const { AppError } = require('../utils/error');
+const { dateParse } = require('../utils/dateParse');
 
 const UserSchema = new mongoose.Schema({
   email: {
@@ -52,14 +53,6 @@ const UserSchema = new mongoose.Schema({
     type: String,
     default: 0,
   },
-  createAt: {
-    type: Date,
-    default: Date.now(),
-  },
-  updateAt: {
-    type: Date,
-    default: Date.now(),
-  },
   passwordChangeTime: {
     type: Date,
     default: Date.now(),
@@ -78,12 +71,18 @@ const UserSchema = new mongoose.Schema({
       },
     }
   ],
+}, {
+  timestamps: true,
 });
 
-UserSchema.methods.toJSON = function () { // 隱藏敏感資訊
-  const userObject = this.toObject();
-  delete userObject.password;
-  delete userObject.tokens;
+UserSchema.methods.toJSON = function () {
+  let userObject = this.toObject();
+  const changeArr = ['createdAt', 'updatedAt', 'passwordChangeTime'];
+  dateParse(userObject, changeArr, true).then(obj => {
+    delete obj.password;
+    delete obj.tokens;
+    userObject = obj;
+  }); 
   return userObject;
 };
 
