@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const user = require('../controller/user');
-const { auth } = require('../utils/auth');
+const { auth, restrictTo } = require('../utils/auth');
 
 router
   .route('/')
@@ -32,5 +32,9 @@ router
 router
   .route('/resetPassword')
   .post(user.resetPassword)
+
+router
+  .route('/getIdentifiedUser')
+  .post(auth, restrictTo('admin'), user.getIdentifiedUser)
 
 module.exports = router;

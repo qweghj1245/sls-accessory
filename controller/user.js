@@ -108,3 +108,18 @@ module.exports.resetPassword = catchError(async (req, res, next) => { // 忘記�
   await user.save();
   sendTokenConfig(user, 200, res);
 });
+
+module.exports.getIdentifiedUser = catchError(async (req, res, next) =>{ // 取得身份所有使用者（含搜尋）
+  if (!req.body.identity) {
+    return next(500, 'You cant do this operate!');
+  }
+
+  const searchConfig = {
+    identity: req.body.identity,
+  };
+  if (req.body.name) {
+    searchConfig.name = req.body.name;
+  }
+  const userList = await User.find(searchConfig);
+  res.status(200).send(userList);
+});

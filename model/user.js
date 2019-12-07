@@ -48,6 +48,10 @@ const UserSchema = new mongoose.Schema({
   address: String,
   phoneNumber: String,
   photo: String,
+  orderLength: {
+    type: String,
+    default: 0,
+  },
   createAt: {
     type: Date,
     default: Date.now(),
