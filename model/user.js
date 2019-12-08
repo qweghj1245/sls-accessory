@@ -78,12 +78,10 @@ const UserSchema = new mongoose.Schema({
 UserSchema.methods.toJSON = function () {
   let userObject = this.toObject();
   const changeArr = ['createdAt', 'updatedAt', 'passwordChangeTime'];
-  dateParse(userObject, changeArr, true).then(obj => {
-    delete obj.password;
-    delete obj.tokens;
-    userObject = obj;
-  }); 
-  return userObject;
+  let obj = dateParse(userObject, changeArr);
+  delete obj.password;
+  delete obj.tokens;
+  return obj;
 };
 
 UserSchema.statics.findByCredential = async function (email, password, next) { // 找到使用者 然後 比較密碼
