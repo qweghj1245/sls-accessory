@@ -25,6 +25,8 @@ module.exports.getAllProducts = catchError(async (req, res, next) => {  // 取�
 module.exports.getProductById = catchError(async (req, res, next) => { // 取得單一商品
   const product = await Product.findOne({ _id: req.params.id });
   if (!product) return next(new AppError(404, 'Cannot find product!'));
+  product.viewingCount += 1;
+  await product.save();
   res.status(200).send(product);
 });
 
