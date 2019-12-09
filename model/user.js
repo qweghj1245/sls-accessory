@@ -44,9 +44,6 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: [true, 'NAME is required'],
   },
-  address: String,
-  phoneNumber: String,
-  photo: String,
   orderLength: {
     type: String,
     default: 0,
@@ -55,8 +52,6 @@ const UserSchema = new mongoose.Schema({
     type: Date,
     default: Date.now(),
   },
-  passwordResetToken: String,
-  passwordResetExpires: Date,
   isActive: {
     type: Boolean,
     default: true,
@@ -74,6 +69,15 @@ const UserSchema = new mongoose.Schema({
     default: 'local',
     enum: ['local', 'google'],
   },
+  postalCode: Number,
+  county: String,
+  area: String,
+  address: String,
+  phoneNumber: String,
+  photo: String,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
+
 }, {
   timestamps: true,
 });
@@ -84,7 +88,7 @@ UserSchema.methods.toJSON = function () {
   let obj = dateParse(userObject, changeArr);
   delete obj.password;
   delete obj.tokens;
-  if (this.userSource=='google') delete obj.passwordChangeTime;
+  if (this.userSource == 'google') delete obj.passwordChangeTime;
   return obj;
 };
 
