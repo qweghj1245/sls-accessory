@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, 'You need to provide EMAIL'],
-    unique: true,
+    unique: [true, 'werjiowerjiowe'],
     trim: true,
     validate(val) {
       if (!validate.isEmail(val)) {
@@ -20,7 +20,6 @@ const UserSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, 'You need to provide PASSWORD'],
     minlength: 6,
     trim: true,
     validate(val) {
@@ -31,7 +30,6 @@ const UserSchema = new mongoose.Schema({
   },
   passwordConfirm: {
     type: String,
-    required: [true, 'You need to provide password to compare two password'],
     select: false,
     validate(val) {
       return val === this.password;
@@ -71,6 +69,11 @@ const UserSchema = new mongoose.Schema({
       },
     }
   ],
+  userSource: {
+    type: String,
+    default: 'local',
+    enum: ['local', 'google'],
+  },
 }, {
   timestamps: true,
 });
@@ -81,6 +84,7 @@ UserSchema.methods.toJSON = function () {
   let obj = dateParse(userObject, changeArr);
   delete obj.password;
   delete obj.tokens;
+  if (this.userSource=='google') delete obj.passwordChangeTime;
   return obj;
 };
 

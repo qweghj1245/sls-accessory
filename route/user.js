@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const user = require('../controller/user');
-const { auth, restrictTo } = require('../utils/auth');
+const { auth, restrictTo, googleVerify } = require('../utils/auth');
 
 router
   .route('/')
@@ -36,5 +36,9 @@ router
 router
   .route('/getIdentifiedUser')
   .post(auth, restrictTo('admin'), user.getIdentifiedUser)
+
+router
+  .route('/googleSignIn')
+  .post(user.googleSignInProcess)
 
 module.exports = router;

@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto');
+const { OAuth2Client } = require('google-auth-library');
 const User = require('../model/user');
 const { catchError, AppError } = require('../utils/error');
 const { sendTokenConfig } = require('../utils/jwt');
@@ -7,8 +8,10 @@ const { sendResetEmail } = require('../utils/email');
 
 module.exports.createUser = catchError(async (req, res, next) => { // 創建使用者
   try {
+    const findIfRegistered = await User.findOne({ email: req.body.email, userSource: 'google' });
+    if (findIfRegistered) return next(new AppError(403, 'You already have registered by google!'));
     const user = await User.create(req.body);
-    res.status(201).send(user);
+    sendTokenConfig(user, 201, res);
   } catch (error) {
     return next(new AppError(500, error));
   }
@@ -109,7 +112,7 @@ module.exports.resetPassword = catchError(async (req, res, next) => { // 忘記�
   sendTokenConfig(user, 200, res);
 });
 
-module.exports.getIdentifiedUser = catchError(async (req, res, next) =>{ // 取得身份所有使用者（含搜尋）
+module.exports.getIdentifiedUser = catchError(async (req, res, next) => { // 取得身份所有使用者（含搜尋）
   if (!req.body.identity) {
     return next(500, 'You cant do this operate!');
   }
@@ -122,4 +125,28 @@ module.exports.getIdentifiedUser = catchError(async (req, res, next) =>{ // 取�
   }
   const userList = await User.find(searchConfig);
   res.status(200).send(userList);
+});
+
+module.exports.googleSignInProcess = catchError(async (req, res, next) => { // google 登入
+  const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+  const ticket = await client.verifyIdToken({
+    idToken: req.body.token,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+  const payload = ticket.getPayload();
+  const { name, email, picture, email_verified } = payload;
+  const findIfRegistered = await User.findOne({ email });
+  if (findIfRegistered && findIfRegistered.userSource == 'local') {
+    return next(new AppError(403, 'You already have registered by locally!'));
+  } else if (findIfRegistered && findIfRegistered.userSource == 'google') {
+    return sendTokenConfig(findIfRegistered, 201, res);
+  }
+  if (!email_verified) return next(new AppError(403, 'Please verify your email account!'));
+  const user = await User.create({
+    name,
+    email,
+    photo: picture,
+    userSource: 'google',
+  });
+  sendTokenConfig(user, 201, res);
 });

@@ -5,7 +5,7 @@ const { catchError, AppError } = require('./error');
 module.exports.auth = catchError(async (req, res, next) => { // Authorization
   const token = req.header('Authorization').replace('Bearer ', '');
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  const user = await User.findOne({ _id: decoded._id, 'tokens.token': token});
+  const user = await User.findOne({ _id: decoded._id, 'tokens.token': token });
   if (!user) return next(new AppError(404, 'Authorization is wrong'));
 
   req.token = token;

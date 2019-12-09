@@ -14,6 +14,7 @@ provider:
     JWT_SECRET: ${self:custom.secret.JWT_SECRET}
     COOKIEEXPIRE: ${self:custom.secret.COOKIEEXPIRE}
     SEND_GRID_API_KEY: ${self:custom.secret.SEND_GRID_API_KEY}
+    GOOGLE_CLIENT_ID: ${self:custom.secret.GOOGLE_CLIENT_ID}
     
 functions:
   app:
