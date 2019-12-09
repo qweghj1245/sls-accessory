@@ -22,7 +22,7 @@ module.exports.getUser = catchError(async (req, res) => { // 取得 使用者
 });
 
 module.exports.updateUser = catchError(async (req, res, next) => { // 更新使用者資訊
-  const key = ['name', 'photo', 'address', 'phoneNumber'];
+  const key = ['name', 'photo', 'address', 'phoneNumber', 'postalCode', 'county', 'area'];
   const reqKey = Object.keys(req.body);
   const includesType = reqKey.every(d => key.includes(d));
   if (!includesType) return next(500, 'Your request body cannot pass');
