@@ -9,4 +9,7 @@ router.route('/')
   .patch(auth, restrictTo('admin'), coupon.updateCoupon)
   .delete(auth, restrictTo('admin'), coupon.deleteCoupons)
 
+router.route('/getCouponAndUpdate')
+  .post(auth, coupon.getCouponAndUpdate)
+
 module.exports = router;

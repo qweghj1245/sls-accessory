@@ -69,12 +69,7 @@ const UserSchema = new mongoose.Schema({
     default: 'local',
     enum: ['local', 'google'],
   },
-  useCoupon: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Coupon',
-    },
-  ],
+  useCoupon: mongoose.Schema.Types.ObjectId,
   postalCode: Number,
   county: String,
   area: String,

@@ -32,16 +32,16 @@ module.exports.updateCoupon = catchError(async (req, res, next) => { // 更新�
     const coupon = await Coupon.findByIdAndUpdate(req.body.id, req.body, { new: true });
     res.status(200).send(coupon);
   } catch (error) {
-    return next(new AppError(500, error)); 
+    return next(new AppError(500, error));
   }
 });
 
 module.exports.deleteCoupons = catchError(async (req, res, next) => { // 刪除優惠卷
   try {
     await Coupon.findByIdAndDelete(req.body.id);
-    res.status(200).send({ message: 'success!'});
+    res.status(200).send({ message: 'success!' });
   } catch (error) {
-    return next(new AppError(500, error)); 
+    return next(new AppError(500, error));
   }
 });
 
@@ -49,4 +49,16 @@ module.exports.deleteManyCoupons = catchError(async (req, res, next) => { // 批
   if (!req.body.couponsIds.length) return next(400, 'Fields length must gt 1');
   await Coupon.deleteMany({ _id: { $in: req.body.couponsIds } });
   res.status(200).send({ message: 'success!' });
+});
+
+module.exports.getCouponAndUpdate = catchError(async (req, res, next) => { // 更新用戶正在使用的優惠卷
+  try {
+    const coupon = await Coupon.findOne({ couponCode: req.body.couponCode });
+    if (!coupon) return next(new AppError(404, 'not Found!'));
+    req.user.useCoupon = coupon._id;
+    await req.user.save();
+    res.status(200).send({ message: 'success!'});
+  } catch (error) {
+    return next(new AppError(500, error));
+  }
 });
