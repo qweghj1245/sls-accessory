@@ -35,7 +35,7 @@ module.exports.addToCart = catchError(async (req, res, next) => { // 加入購�
     });
     res.status(201).send(addCart);
   } catch (error) {
-    return next(AppError(500, "Server Error!"));
+    return next(AppError(500, error));
   }
 });
 
@@ -46,6 +46,6 @@ module.exports.deleteCart = catchError(async (req, res, next) => { // 刪除購�
     await userCarts.save();
     res.status(200).send({ message: 'success!' });
   } catch (error) {
-    return next(400, "Invalid Field!");
+    return next(400, error);
   }
 });

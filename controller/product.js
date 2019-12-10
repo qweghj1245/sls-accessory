@@ -9,7 +9,7 @@ module.exports.createProduct = catchError(async (req, res, next) => { // å‰µå»ºå
     });
     res.status(201).send(product);
   } catch (error) {
-    return next(new AppError(500, 'Server Error'));
+    return next(new AppError(500, error));
   }
 });
 
@@ -18,7 +18,7 @@ module.exports.getAllProducts = catchError(async (req, res, next) => {  // å–å¾
     const products = await Product.find().sort('-createAt');
     res.status(200).send(products);
   } catch (error) {
-    return next(new AppError(500, 'Server Error'));
+    return next(new AppError(500, error));
   }
 });
 
@@ -48,7 +48,7 @@ module.exports.updateProduct = catchError(async (req, res, next) => { // æ›´æ–°å
 
     res.status(200).send(product);
   } catch (error) {
-    return next(new AppError(500, 'Server Error!'));
+    return next(new AppError(500, error));
   }
 });
 

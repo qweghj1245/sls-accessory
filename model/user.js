@@ -69,6 +69,12 @@ const UserSchema = new mongoose.Schema({
     default: 'local',
     enum: ['local', 'google'],
   },
+  useCoupon: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Coupon',
+    },
+  ],
   postalCode: Number,
   county: String,
   area: String,
@@ -77,7 +83,6 @@ const UserSchema = new mongoose.Schema({
   photo: String,
   passwordResetToken: String,
   passwordResetExpires: Date,
-
 }, {
   timestamps: true,
 });
