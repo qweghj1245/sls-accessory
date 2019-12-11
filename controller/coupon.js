@@ -55,9 +55,9 @@ module.exports.getCouponAndUpdate = catchError(async (req, res, next) => { // æ›
   try {
     const coupon = await Coupon.findOne({ couponCode: req.body.couponCode });
     if (!coupon) return next(new AppError(404, 'not Found!'));
-    req.user.useCoupon = coupon._id;
+    req.user.useCoupon.coupon = coupon._id;
     await req.user.save();
-    res.status(200).send({ message: 'success!'});
+    res.status(200).send({ message: 'success!', coupon });
   } catch (error) {
     return next(new AppError(500, error));
   }
