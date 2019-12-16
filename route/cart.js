@@ -8,4 +8,7 @@ router.route('/')
   .post(auth, cart.addToCart)
   .delete(auth, cart.deleteCart)
 
+router.route('/calculatePrice')
+  .post(auth, cart.calculatePrice)
+
 module.exports = router;

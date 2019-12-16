@@ -1,13 +1,14 @@
 const Coupon = require('../model/coupon');
+const Cart = require('../model/cart');
 const { catchError, AppError } = require('../utils/error');
-const { generateCode } = require('../utils/couponCode');
+const { generateCode } = require('../utils/randomCode');
 module.exports.createCoupon = catchError(async (req, res, next) => { // 創建優惠卷
   const keys = ['state', 'couponCode'];
   const reqKeys = Object.keys(req.body);
   const checkKey = keys.some(d => reqKeys.includes(d));
   if (checkKey) return next(new AppError(400, 'Invalid value'));
 
-  const code = generateCode();
+  const code = generateCode(8);
   const coupon = new Coupon({
     ...req.body,
     couponCode: code,
@@ -53,11 +54,11 @@ module.exports.deleteManyCoupons = catchError(async (req, res, next) => { // 批
 
 module.exports.getCouponAndUpdate = catchError(async (req, res, next) => { // 更新用戶正在使用的優惠卷
   try {
-    const coupon = await Coupon.findOne({ couponCode: req.body.couponCode });
+    const coupon = await Coupon.findOne({ couponCode: req.body.couponCode, isUsed: { "$ne": req.user._id } });
     if (!coupon) return next(new AppError(404, 'not Found!'));
-    req.user.useCoupon.coupon = coupon._id;
-    await req.user.save();
-    res.status(200).send({ message: 'success!', coupon });
+    const cart = await Cart.findByIdAndUpdate(req.body.cartId, { 'useCoupon': coupon._id }, { new: true });
+    if (!cart) return next(new AppError(404, 'not Found!'));
+    res.status(200).send({ message: 'success!', cart, coupon });
   } catch (error) {
     return next(new AppError(500, error));
   }

@@ -13,6 +13,10 @@ const CartSchema = new mongoose.Schema({
     },
   ],
   user: mongoose.Schema.Types.ObjectId,
+  useCoupon: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Coupon'
+  },
 });
 
 CartSchema.index({ user: 1 });

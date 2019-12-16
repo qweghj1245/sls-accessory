@@ -15,7 +15,7 @@ provider:
     COOKIEEXPIRE: ${self:custom.secret.COOKIEEXPIRE}
     SEND_GRID_API_KEY: ${self:custom.secret.SEND_GRID_API_KEY}
     GOOGLE_CLIENT_ID: ${self:custom.secret.GOOGLE_CLIENT_ID}
-    
+    STRIPE_KEY: ${self:custom.secret.STRIPE_KEY}
 functions:
   app:
     handler: handler.app

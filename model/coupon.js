@@ -20,6 +20,7 @@ const CouponSchema = new mongoose.Schema({
   startAt: {
     type: Date,
     default: Date.now(),
+    required: [true, 'start time must be required!'],
   },
   expireAt: {
     type: Date,
@@ -31,12 +32,17 @@ const CouponSchema = new mongoose.Schema({
     default: 'notActive',
   },
   createUser: mongoose.Schema.Types.ObjectId,
+  isUsed: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+    }
+  ],
 });
 
 CouponSchema.index({ expireAt: 1 });
 
 CouponSchema.pre('save', function (next) {
-  if (this.startAt < Date.now()) {
+  if (this.startAt < Date.now() && this.expireAt > Date.now()) {
     this.state = 'inEffect';
   } else if (this.expireAt < Date.now()) {
     this.state = 'lapse';

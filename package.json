@@ -16,6 +16,7 @@
     "mongoose": "^5.7.13",
     "serverless-http": "^2.3.0",
     "serverless-offline": "^5.12.1",
+    "stripe": "^7.14.0",
     "validator": "^12.1.0"
   },
   "devDependencies": {},

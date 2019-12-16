@@ -49,3 +49,55 @@ module.exports.deleteCart = catchError(async (req, res, next) => { // 刪除購�
     return next(400, error);
   }
 });
+
+module.exports.calculatePrice = catchError(async (req, res, next) => { // 計算購物車內商品總價
+  const result = await Cart.aggregate([
+    {
+      $unwind: "$products",
+    },
+    {
+      $match: { user: req.user._id }
+    },
+    {
+      $lookup: {
+        from: "coupons",
+        localField: "useCoupon.coupon",
+        foreignField: "_id",
+        as: "currentCoupon"
+      }
+    },
+    {
+      $lookup: {
+        from: "products",
+        localField: "products.product",
+        foreignField: "_id",
+        as: "currectProducts"
+      }
+    },
+    {
+      $project: {
+        item: { discount: "$currentCoupon.discount", price: "$currectProducts.price" }
+      }
+    },
+    {
+      $project: {
+        discount: { $arrayElemAt: ["$item.discount", 0] },
+        price: { $arrayElemAt: ["$item.price", 0] },
+      }
+    },
+    {
+      $project: {
+        discount: { $divide: ["$discount", 100] },
+        price: "$price",
+      }
+    },
+    { $project: { totalPrice: { $multiply: [ "$discount", "$price" ] } } },
+    {
+      $group: {
+        _id: '$_id',
+        totalPrice: { $sum: "$totalPrice" },
+      }
+    }
+  ]);
+  res.status(200).send(result);
+});
