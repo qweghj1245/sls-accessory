@@ -30,8 +30,7 @@ module.exports.getCheckoutSession = catchError(async (req, res, next) => { // �
       transactionNumber: generateCode(10),
       user: req.user._id
     });
-    await order.save();
-    
+
     const checkout = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       success_url: `${req.protocol}://${req.get('host')}/`,
@@ -49,26 +48,21 @@ module.exports.getCheckoutSession = catchError(async (req, res, next) => { // �
         }
       ]
     });
-    res.status(200).send({ order, checkout });
+
+    const userCart = await Cart.findOne({ user: req.user._id });
+    userCart.products = [];
+    await userCart.save();
+
+    const coupon = await Coupon.findById(userCart.useCoupon);
+    if (coupon.useLimit == 1) coupon.isUsed.push(req.user._id);
+    await coupon.save();
+
+    order.sessionId = checkout.id;
+    await order.save();
+    res.status(200).send({ order, checkout, userCart, coupon});
   } catch (error) {
     return next(new AppError(error));
   }
 });
 
-module.exports.getStripeOrder = catchError(async (req, res, next) => { // checkout 頁面
-  await stripe.checkout.sessions.retrieve(req.body.sessionId, async (err, session) => {
-    let userCart, coupon;
-    if (session) {
-      userCart = await Cart.findOne({ user: req.user._id });
-      userCart.products = [];
-      await userCart.save();
 
-      coupon = await Coupon.findById(userCart.useCoupon);
-      if (coupon.useLimit==1) coupon.isUsed.push(req.user._id);
-      await coupon.save();
-    }
-    res.status(200).send({ session, userCart, coupon });
-  });
-});
-
-// 付款完成時間？？？？

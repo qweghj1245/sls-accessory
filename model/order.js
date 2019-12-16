@@ -68,6 +68,7 @@ const OrderSchema = new mongoose.Schema({
     type: String,
     select: false,
   },
+  sessionId: String,
 }, {
   timestamps: true,
 });

@@ -7,7 +7,4 @@ router.route('/')
   .get(auth, order.getOrders)
   .post(auth, order.getCheckoutSession)
 
-router.route('/checkout')
-  .post(auth, order.getStripeOrder)
-
   module.exports = router;
