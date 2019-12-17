@@ -65,4 +65,8 @@ module.exports.getCheckoutSession = catchError(async (req, res, next) => { // �
   }
 });
 
-
+module.exports.getOrder = catchError(async (req, res, next) => { // 取得單一訂單
+  const order = await Order.findById(req.body.orderId);
+  if (!order) return next(new AppError(404, 'Cannot found order!'));
+  res.status(200).send(order);
+});
