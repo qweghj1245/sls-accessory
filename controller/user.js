@@ -128,6 +128,8 @@ module.exports.getIdentifiedUser = catchError(async (req, res, next) => { // 取
 });
 
 module.exports.googleSignInProcess = catchError(async (req, res, next) => { // google 登入
+  console.log(req.body);
+  
   const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
   const ticket = await client.verifyIdToken({
     idToken: req.body.token,
