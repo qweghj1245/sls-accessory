@@ -8,7 +8,7 @@ const ProductSchema = new mongoose.Schema({
   },
   classification: {
     type: String,
-    enum: ['首頁精選商品', '紙製品', '手機配件', '包包提袋', '其他'],
+    enum: ['home', 'paper', 'phoneAcc', 'bag', 'others'],
     required: [true, 'You need provide classification field!'],
   },
   description: String,
