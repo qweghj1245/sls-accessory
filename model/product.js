@@ -12,11 +12,7 @@ const ProductSchema = new mongoose.Schema({
     required: [true, 'You need provide classification field!'],
   },
   description: String,
-  photos: [ // length < 4
-    {
-      photo: String,
-    },
-  ],
+  photos: [String],
   isActive: {
     type: Boolean,
     default: true,
