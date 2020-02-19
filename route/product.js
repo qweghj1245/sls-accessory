@@ -23,4 +23,7 @@ router.route('/collectProduct')
 router.route('/getCollectProducts')
   .post(auth, product.getCollectProducts)
 
+router.route('/createProdcuts')
+  .post(auth, product.createProducts)
+
 module.exports = router;

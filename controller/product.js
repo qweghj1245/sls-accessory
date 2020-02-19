@@ -13,6 +13,15 @@ module.exports.createProduct = catchError(async (req, res, next) => { // 創建�
   }
 });
 
+module.exports.createProducts = catchError(async (req, res, next) => { // 創建多個商品
+  Promise.all(req.body.products.map(item => {
+    return Product.create({
+      ...item,
+      updatePerson: req.user._id,
+    }).catch(error => next(new AppError(500, error)));
+  })).then(products => res.status(201).send(products)).catch(error => next(new AppError(500, error)));
+});
+
 module.exports.getAllProducts = catchError(async (req, res, next) => {  // 取得所有商品
   try {
     const products = await Product.find().sort('-createAt');
