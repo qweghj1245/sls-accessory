@@ -4,7 +4,7 @@ const { catchError, AppError } = require('../utils/error');
 module.exports.getCarts = catchError(async (req, res, next) => { // 取得個人購物車
   const carts = await Cart.findOne({ user: req.user._id }).populate({
     path: 'products.product',
-    select: { name: 1, price: 1, photos: 1, collector: 1, createdAt: 1, updatedAt: 1 },
+    select: { name: 1, price: 1, photos: 1, collector: 1, createdAt: 1, updatedAt: 1, quantity: 1 },
   });
   res.status(200).send(carts);
 });
