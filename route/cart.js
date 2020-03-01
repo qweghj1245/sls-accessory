@@ -6,7 +6,10 @@ const { auth, restrictTo } = require('../utils/auth');
 router.route('/')
   .get(auth, cart.getCarts)
   .post(auth, cart.addToCart)
-  .delete(auth, cart.deleteCart)
+  // .delete(auth, cart.deleteCart)
+
+router.route('/deleteCart')
+  .post(auth, cart.deleteCart)
 
 router.route('/calculatePrice')
   .post(auth, cart.calculatePrice)

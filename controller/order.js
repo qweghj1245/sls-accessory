@@ -12,20 +12,15 @@ module.exports.getOrders = catchError(async (req, res, next) => { // 取得（�
       user: req.user._id
     };
   }
-  const orders = await Order.find(config).populate({
-    path: 'cart',
-    select: 'products',
-    populate: {
-      path: 'products.product',
-    },
-  });
+  const orders = await Order.find(config);
   res.status(200).send(orders);
 });
 
 module.exports.getCheckoutSession = catchError(async (req, res, next) => { // 創建訂單後付款 
+  const { successUrl, cancelUrl, ...otherData } = req.body;
   try {
     const order = new Order({
-      ...req.body,
+      ...otherData,
       orderNumber: generateCode(10),
       transactionNumber: generateCode(10),
       user: req.user._id
@@ -33,14 +28,14 @@ module.exports.getCheckoutSession = catchError(async (req, res, next) => { // �
 
     const checkout = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
-      success_url: `${req.protocol}://${req.get('host')}/`,
-      cancel_url: `${req.protocol}://${req.get('host')}/`,
+      success_url: successUrl + '/' + order._id + '?status=done',
+      cancel_url: cancelUrl,
       customer_email: req.user.email,
       client_reference_id: JSON.parse(JSON.stringify(order._id)),
       line_items: [
         {
-          name: `${req.user.name} order at ${new Date()}`,
-          description: 'This is a new Order',
+          name: `${req.user.name} 在 ${new Date()} 創建訂單`,
+          description: '這是一個新訂單',
           images: [`${req.user.photo}`],
           amount: req.body.amount,
           currency: 'usd',
@@ -54,9 +49,10 @@ module.exports.getCheckoutSession = catchError(async (req, res, next) => { // �
     await userCart.save();
 
     const coupon = await Coupon.findById(userCart.useCoupon);
-    if (coupon.useLimit == 1) coupon.isUsed.push(req.user._id);
-    await coupon.save();
-
+    if (coupon) {
+      if (coupon.useLimit == 1) coupon.isUsed.push(req.user._id);
+      await coupon.save();
+    }
     order.sessionId = checkout.id;
     await order.save();
     res.status(200).send({ order, checkout, userCart, coupon});

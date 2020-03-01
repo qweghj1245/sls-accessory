@@ -45,6 +45,10 @@ const OrderSchema = new mongoose.Schema({
     type: String,
     required: [true, 'Missing Field!'],
   },
+  recipientAddress: {
+    type: String,
+    required: [true, 'Missing Field!'],
+  },
   invioce: {
     type: String,
     default: '寄送給我',
@@ -60,23 +64,18 @@ const OrderSchema = new mongoose.Schema({
   email: String,
   coupon: mongoose.Schema.Types.ObjectId,
   user: mongoose.Schema.Types.ObjectId,
-  cart: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Cart',
-  },
+  cart: mongoose.Schema.Types.ObjectId,
+  products: Array,
   exprireCode: {
     type: String,
     select: false,
   },
   sessionId: String,
+  amount: Number,
 }, {
   timestamps: true,
 });
 
-OrderSchema.pre('save', function(next) {
-  this.populate('cart');
-  next();
-});
 const Order = mongoose.model('Order', OrderSchema);
 
 module.exports = Order;
