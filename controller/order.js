@@ -21,6 +21,7 @@ module.exports.getCheckoutSession = catchError(async (req, res, next) => { // �
   try {
     const order = new Order({
       ...otherData,
+      email: req.user.email,
       orderNumber: generateCode(10),
       transactionNumber: generateCode(10),
       user: req.user._id
@@ -55,7 +56,7 @@ module.exports.getCheckoutSession = catchError(async (req, res, next) => { // �
     }
     order.sessionId = checkout.id;
     await order.save();
-    res.status(200).send({ order, checkout, userCart, coupon});
+    res.status(200).send({ order, checkout, userCart, coupon });
   } catch (error) {
     return next(new AppError(error));
   }
@@ -65,4 +66,22 @@ module.exports.getOrder = catchError(async (req, res, next) => { // 取得單一
   const order = await Order.findById(req.body.orderId);
   if (!order) return next(new AppError(404, 'Cannot found order!'));
   res.status(200).send(order);
+});
+
+module.exports.updateOrderStatus = catchError(async (req, res, next) => {
+  const order = await Order.findById(req.body.id);
+  const orderStatus = ['notYet', 'handling', 'isComplete'];
+  const payStatus = ['isPay', 'noPay'];
+  const deliveryStatus = ['notYet', 'inStock', 'shipped'];
+  if (!orderStatus.includes(req.body.orderStatus))
+    return next(new AppError(400, 'Your order fields is not correct'));
+  if (!payStatus.includes(req.body.payStatus))
+    return next(new AppError(400, 'Your pay fields is not correct'));
+  if (!deliveryStatus.includes(req.body.delivery))
+    return next(new AppError(400, 'Your delivery fields is not correct'));
+  order.orderStatus = req.body.orderStatus;
+  order.payStatus = req.body.payStatus;
+  order.delivery = req.body.delivery;
+  await order.save();
+  return res.status(200).send(order);
 });

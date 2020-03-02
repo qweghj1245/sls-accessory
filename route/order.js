@@ -10,4 +10,7 @@ router.route('/')
 router.route('/getOrder')
   .post(auth, order.getOrder)
 
+router.route('/updateOrderStatus')
+  .patch(auth, order.updateOrderStatus)
+
   module.exports = router;

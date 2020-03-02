@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { dateParse } = require('../utils/dateParse');
 
 const OrderSchema = new mongoose.Schema({
   orderNumber: String,
@@ -72,9 +73,19 @@ const OrderSchema = new mongoose.Schema({
   },
   sessionId: String,
   amount: Number,
+  email: {
+    type: String,
+    required: true,
+  },
 }, {
   timestamps: true,
 });
+
+OrderSchema.methods.toJSON = function () {
+  const orderObject = this.toObject();
+  const changeArr = ['createdAt', 'updatedAt'];
+  return dateParse(orderObject, changeArr);
+};
 
 const Order = mongoose.model('Order', OrderSchema);
 
